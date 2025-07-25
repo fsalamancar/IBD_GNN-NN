@@ -47,7 +47,7 @@ A two-layer **Graph Convolutional Network (GCN)** learns context-rich embeddings
     $$H_{\text{proteins}} = \tilde{\mathbf{A}} H_{\text{intermediate}} \mathbf{W}^{(2)}$$
 
 #### b. Patient Embedding Construction & Classification
-* **Patient Embedding Construction:** Unique patient-specific embeddings ($E_{\text{patients}}$) are derived by a matrix multiplication of the original patient expression data ($\mathbf{E}_{\text{patient}}$) with the learned protein embeddings ($H_{\text{proteins}}$). This integrates network context with personalized expression profiles.
+* **Patient Embedding Construction:** Unique patient-specific embeddings ($E_{\text{patients}}$) are derived by a matrix multiplication of the original patient expression data ($E_{\text{patient}$) with the learned protein embeddings ($H_{\text{proteins}}$). This integrates network context with personalized expression profiles.
     $$E_{\text{patients}} = \mathbf{E}_{\text{patient}} \times H_{\text{proteins}}$$
 * **Patient Classification:** The patient embeddings are then passed through a final linear layer (`fc_patient`) to produce classification logits ($L$).
     $$L = \text{Linear}(E_{\text{patients}})$$
