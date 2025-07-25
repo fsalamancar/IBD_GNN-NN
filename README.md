@@ -1,8 +1,20 @@
 # Patient Classification using Graph Neural Networks and Protein Interaction Networks
 
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)  
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)  
+![Status](https://img.shields.io/badge/status-Research%20Project-yellow)
+
+
 ## Overview
 
 This repository contains the code and resources for a machine learning project focused on classifying patients (e.g., diseased vs. control) by leveraging **Graph Neural Networks (GNNs)**. Our approach integrates patient-specific protein expression data with a **protein-protein interaction (PPI) network** to learn rich, context-aware representations of proteins and, subsequently, patients. This methodology aims to improve patient stratification, especially in scenarios with imbalanced class distributions.
+
+## 👨‍💻 Authors
+
+- **Francisco Salamanca¹** — MSc Bioinformatics Student, Universidad Nacional de Colombia  
+- **Jorge Morales²** — MSc Industrial Engineering Student, Universidad Nacional de Colombia  
+
 
 ## Project Goal
 
@@ -109,11 +121,17 @@ To replicate the results or run the model:
 
 
 ├── main.ipynb             # Main Jupyter Notebook containing model definition, training, and evaluation
+
 ├── ml_project_paper.pdf   # (Optional) Associated research paper or project report
+
 ├── data/                  # Directory for input data (e.g., patient_expression.csv, edges.csv, labels.csv)
+
 │   ├── patient_expression_data.pt # Example: Protein expression tensor
+
 │   ├── edge_index.pt        # Example: Graph edge index tensor
+
 │   └── ...
+
 └── README.md              # This file
 
 
@@ -122,10 +140,11 @@ To replicate the results or run the model:
 
 We welcome contributions! Please open an issue or submit a pull request for any improvements or bug fixes.
 
-## License
-
-[Specify your license here, e.g., MIT, Apache 2.0, etc.]
 
 ---
+## 👤 Author
 
-**Contact:** [Your Name/Email/LinkedIn]
+**Francisco Salamanca**  
+Bioinformatician | MSc in Bioinformatics  
+Universidad Nacinal de Colombia | Institute of Clinical Molecular Biology
+[GitHub](https://github.com/fsalamancar) • [Website](https://fsalamancar.github.io/) • [LinkedIn](https://www.linkedin.com/in/fjosesala/) • [IKMB](https://www.ikmb.uni-kiel.de/people/francisco-salamanca/)
