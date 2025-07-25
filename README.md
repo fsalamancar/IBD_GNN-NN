@@ -27,46 +27,93 @@ The primary objective is to develop a robust classification model capable of acc
 Our pipeline consists of several key stages:
 
 ### 1. Data Preparation and Preprocessing
-* **Input Data:**
-    * `patient_expression_data`: A matrix ($N_p \times N_{pr}$) where $N_p$ is the number of patients and $N_{pr}$ is the number of proteins.
-    * `x_protein_features`: Initial node features for the GNN, where each protein's features are its expression levels across all patients ($N_{pr} \times N_p$).
-    * `edge_index`, `edge_weight`: Representing the PPI network's connectivity and interaction strengths.
-    * `patient_labels`: Binary labels for each patient.
-* **Data Split:** Data is split into training and testing sets.
-* **Class Imbalance Handling:** Weighted Cross-Entropy Loss is employed during training to mitigate the effects of class imbalance, assigning different weights to the minority and majority classes.
+
+**Input Data:**
+
+- `patient_expression_data`: A matrix (Np x Npr) where:
+  - Np = number of patients  
+  - Npr = number of proteins
+- `x_protein_features`: Initial node features for the GNN. Each protein’s feature vector contains its expression levels across all patients (Npr x Np).
+- `edge_index`, `edge_weight`: Represent the PPI network's connectivity and interaction strengths.
+- `patient_labels`: Binary classification labels for each patient.
+
+**Data Split:**  
+Data is split into training and testing sets.
+
+**Class Imbalance Handling:**  
+Weighted Cross-Entropy Loss is used during training to mitigate class imbalance by assigning different weights to the majority and minority classes.
+
+---
 
 ### 2. Model Architecture: `PatientClassifierGNN`
 
-Our custom `PatientClassifierGNN` model is designed in two main parts:
+Our custom GNN model is composed of two key components:
 
 #### a. Protein Embedding Generation (Graph Neural Network)
-A two-layer **Graph Convolutional Network (GCN)** learns context-rich embeddings ($H_{\text{proteins}}$) for each protein.
-* **First GCN Layer (`conv1`):** Transforms initial protein features ($H^{(0)}$) by aggregating information from neighboring proteins within the PPI network (represented by its normalized adjacency matrix $\tilde{\mathbf{A}}$) via learnable weights ($\mathbf{W}^{(1)}$). A ReLU activation and Dropout (p=0.5) are applied.
-    $$H^{(1)} = \text{ReLU}(\tilde{\mathbf{A}} H^{(0)} \mathbf{W}^{(1)})$$
-* **Second GCN Layer (`conv2`):** Further processes intermediate embeddings to yield final protein embeddings ($H_{\text{proteins}}$).
-    $$H_{\text{proteins}} = \tilde{\mathbf{A}} H_{\text{intermediate}} \mathbf{W}^{(2)}$$
+
+A two-layer Graph Convolutional Network (GCN) is used to learn protein embeddings:
+
+- **First GCN Layer (`conv1`):**  
+  Applies a linear transformation followed by neighborhood aggregation using the normalized adjacency matrix. ReLU activation and dropout (p = 0.5) are applied.  
+
+  Formula (text format):  
+  `H_1 = ReLU(Â · H_0 · W_1)`
+
+- **Second GCN Layer (`conv2`):**  
+  Generates the final protein embeddings.  
+
+  Formula:  
+  `H_proteins = Â · H_intermediate · W_2`
+
+Where:  
+- `Â` is the normalized adjacency matrix  
+- `H_0` is the input protein feature matrix  
+- `W_1` and `W_2` are learnable weight matrices  
+- `H_intermediate` is the output of the first GCN layer
+
+---
 
 #### b. Patient Embedding Construction & Classification
-* **Patient Embedding Construction:** Unique patient-specific embeddings ($E_{\text{patients}}$) are derived by a matrix multiplication of the original patient expression data ($E_{\text{patient}$) with the learned protein embeddings ($H_{\text{proteins}}$). This integrates network context with personalized expression profiles.
-    $$E_{\text{patients}} = \mathbf{E}_{\text{patient}} \times H_{\text{proteins}}$$
-* **Patient Classification:** The patient embeddings are then passed through a final linear layer (`fc_patient`) to produce classification logits ($L$).
-    $$L = \text{Linear}(E_{\text{patients}})$$
+
+- **Patient Embedding Construction:**  
+  Patient-specific embeddings are obtained by matrix-multiplying the patient expression matrix with the learned protein embeddings:
+
+  `E_patients = E_patient · H_proteins`
+
+- **Classification Layer:**  
+  A final linear layer maps each patient embedding to classification logits:
+
+  `Logits = Linear(E_patients)`
+
+---
 
 ### 3. Training and Evaluation Protocol
 
-* **Loss Function:** Weighted Cross-Entropy Loss for class imbalance.
-    $$L(y_{\text{true}}, L_{\text{pred}}) = -\frac{1}{N_p} \sum_{i=1}^{N_p} \sum_{c=0}^{N_{\text{classes}}-1} w_c \cdot \mathbf{1}_{y_{\text{true},i}=c} \cdot \log(\text{softmax}(L_{\text{pred},i})_c)$$
-* **Optimizer:** Adam optimizer.
-* **Hyperparameter Optimization:** A grid search was performed to find optimal hyperparameters, including learning rates, GNN hidden channels, protein embedding dimensions, and number of epochs.
-* **Evaluation Metrics:** Model performance is assessed using:
-    * **Test Accuracy**
-    * **F1-score (Class 1 - Diseased)**
-    * **Precision (Class 1)**
-    * **Recall (Class 1)**
-    * **F1-score (Class 0 - Control)**
-    * **AUC-ROC (Area Under the Receiver Operating Characteristic Curve)**
-    * A detailed **Classification Report** and **Confusion Matrix** are generated.
+- **Loss Function:**  
+  Weighted Cross-Entropy Loss is used to account for class imbalance:
 
+  `Loss = - (1/Np) * Σ_i Σ_c (w_c * 1_{y_i = c} * log(softmax(logits_i)_c))`
+
+- **Optimizer:**  
+  Adam optimizer is used.
+
+- **Hyperparameter Optimization:**  
+  Grid search was used to tune:
+  - Learning rate
+  - Number of GNN hidden channels
+  - Protein embedding dimensions
+  - Number of training epochs
+
+- **Evaluation Metrics:**
+  - Test Accuracy
+  - F1-Score (Class 1 - Diseased)
+  - Precision (Class 1)
+  - Recall (Class 1)
+  - F1-Score (Class 0 - Control)
+  - AUC-ROC (Area Under the ROC Curve)
+  - Classification Report and Confusion Matrix
+
+---
 ## Experimental Results
 
 Our experiments involved comparing the GCN-based model against a Graph Attention Network (GAT) model and a traditional Multi-Layer Perceptron (Classical NN).
